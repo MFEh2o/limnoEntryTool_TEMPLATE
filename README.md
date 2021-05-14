@@ -8,57 +8,35 @@ Basically, we're going to be following the instructions [here](https://docs.gith
 
 ### Section 1: GitHub
 
-**Step 1**
+1. Go to the main page of this repository. If you're reading this README, you're very likely already on the main page. You should see a list of files at the top with their most recent commits.
 
-Go to the main page of this repository. If you're reading this README, you're very likely already on the main page. You should see a list of files at the top with their most recent commits.
-
-**Step 2**
-
-Click the big green **Use this template** button.
+2. Click the big green **Use this template** button.
 
 <img width="911" alt="Using this repository as a template" src="https://user-images.githubusercontent.com/37053323/118301989-ae374180-b4b1-11eb-9dc9-859191740b8a.png">
 
-**Step 3**
-
-In the dropdown menu, select the GitHub account that you would like to have as the owner of this repository. You can leave that as MFEh2o, or you can use your own GitHub account. I need to look more into what the repercussions of each of those choices will be.
+3. In the dropdown menu, select the GitHub account that you would like to have as the owner of this repository. You can leave that as MFEh2o, or you can use your own GitHub account. I need to look more into what the repercussions of each of those choices will be.
 
 <img width="430" alt="Choosing an owner for the repository" src="https://user-images.githubusercontent.com/37053323/118302217-f191b000-b4b1-11eb-9fc3-29c60de56e8e.png">
 
-**Step 4**
+4. In the field next to the owner, set a name for the new repository. I recommend **limnoEntryTool_2021** (or whichever year you're entering data for).
 
-In the field next to the owner, set a name for the new repository. I recommend **limnoEntryTool_2021** (or whichever year you're entering data for).
+5. By default, the repository will be private (i.e. viewable only by members of the MFEh2o "organization" on GitHub). You should probably leave it as private.
 
-**Step 5**
+6. Don't bother selecting "Include all branches"--you don't need that.
 
-By default, the repository will be private (i.e. viewable only by members of the MFEh2o "organization" on GitHub). You should probably leave it as private.
+7. Don't bother selecting any Marketplace apps--that's not relevant here.
 
-**Step 6**
-
-Don't bother selecting "Include all branches"--you don't need that.
-
-**Step 7**
-
-Don't bother selecting any Marketplace apps--that's not relevant here.
-
-**Step 8**
-
-Click **Create repository from template.**
+8. Click **Create repository from template.**
 
 ### Section 2: RStudio
 
 Great, now you've created a new GitHub repository. The next step is to download the files onto whichever computer you're going to be using to enter the data.
 
-**Step 1**
+1. Make sure you have **R** and **RStudio** installed on the computer. If you don't, you can install them [here](https://www.r-project.org/) and [here](https://www.rstudio.com/products/rstudio/download/). 
 
-Make sure you have **R** and **RStudio** installed on the computer. If you don't, you can install them [here](https://www.r-project.org/) and [here](https://www.rstudio.com/products/rstudio/download/). 
+2. Make sure you have **git** installed. If you don't, you can follow the instructions [here](https://happygitwithr.com/install-git.html) to install it.
 
-**Step 2** 
-
-Make sure you have **git** installed. If you don't, you can follow the instructions [here](https://happygitwithr.com/install-git.html) to install it.
-
-**Step 3**
-
-If you haven't already on the computer you're using, [introduce yourself to Git](https://happygitwithr.com/hello-git.html) by setting your username and email (should be the same as the username/email associated with your GitHub account). The easiest way to do this is through RStudio.
+3. If you haven't already on the computer you're using, [introduce yourself to Git](https://happygitwithr.com/hello-git.html) by setting your username and email (should be the same as the username/email associated with your GitHub account). The easiest way to do this is through RStudio.
 
 ```
 # install.packages("usethis") # install the usethis package--makes it easy to do complicated and finnicky things in R
@@ -66,13 +44,9 @@ library(usethis)
 use_git_config(user.name = "Jane Doe", user.email = "jane@example.org") # enter your user name and email here.
 ```
 
-**Step 4**
+4. Connect RStudio to GitHub, by following [this tutorial](https://happygitwithr.com/rstudio-git-github.html). The rest of the sections on that website will be helpful if you run into any trouble.
 
-Connect RStudio to GitHub, by following [this tutorial](https://happygitwithr.com/rstudio-git-github.html). The rest of the sections on that website will be helpful if you run into any trouble.
-
-**Step 5**
-
-Okay, it's finally time to download your new template repository. In **RStudio**, go to File > New Project. In the window that pops up, choose "Version Control" and then "Git".
+5. Okay, it's finally time to download your new template repository. In **RStudio**, go to File > New Project. In the window that pops up, choose "Version Control" and then "Git".
 
 Now you should see something like this:
 
