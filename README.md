@@ -82,6 +82,9 @@ db <- "MFEdb_20200530.db" # name of the database file you're using. Try to use o
 
 2. Run the script! Pay attention to warnings and errors that come up in the console. If you get errors related to e.g. trying to add a new lake or site that isn't already in the database, you can re-run the script after adding parameters like `force_lakeID = T` or `force_siteID = T` to the `updateLimno()` function call.
 
+## Coming Soon:
+- instructions on how to push your changes to GitHub
+
 ## Questions?
 
 Contact Kaija (gahmk@caryinstitute.org) with question/troubleshooting. You can also talk to Randi and/or Stuart.
