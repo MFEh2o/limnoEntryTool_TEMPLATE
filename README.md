@@ -60,11 +60,31 @@ Then, you have the option of deciding where to put the new project you're about 
 
 Click "Create Project". Your project will get created, and a new session of RStudio will initialize, with the home directory set to the new folder you've just created.
 
-#### Section 3: Add Files
+### Section 3: Add Files
 
-Now, add your sample sheets. You can use the **limno2020_ID_YYYY-MM-DD (DO NOT SAVE).xlsx** file as a template for creating new sample sheets. Just make sure to copy it before filling it out; leave the **DO NOT SAVE** version as a template.
+1. Add the database file. This should be the most recent version of the database, before adding any data from the current season. Download it from the [MFE Box](https://app.box.com/folder/136303669282). *Note: for clarity and reproducibility, please download the version that includes a date in the file name. So, 'MFEdb_20210423.db', not 'MFEdb.db'.* Put that into the main, top-level 'limnoEntryTool_2021' (or whatever you ended up calling it) folder.
+
+2. Add your sample sheets. You can use the **limno2020_ID_YYYY-MM-DD (DO NOT SAVE).xlsx** file as a template for creating new sample sheets. Just make sure to copy it before filling it out; leave the **DO NOT SAVE** version as a template.
 
 ## Running the limno entry tool
+
+1. There are several files in the 'code/' directory. The only one you should need to work with directly is 'updatingLogs.R'. Open up that file. Fill in the name of the database at the top, on the line that looks like this:
+
+```
+db <- "CHANGE THIS" # name of the database file you're using. Try to use one with a specific date to make the workflow clear. For example, "MFEdb_20200530.db"
+```
+
+So, to be clear, when you're done that line should look like this (with the name of the database version you're using).
+
+```
+db <- "MFEdb_20200530.db" # name of the database file you're using. Try to use one with a specific date to make the workflow clear. For example, "MFEdb_20200530.db"
+```
+
+2. Run the script! Pay attention to warnings and errors that come up in the console. If you get errors related to e.g. trying to add a new lake or site that isn't already in the database, you can re-run the script after adding parameters like `force_lakeID = T` or `force_siteID = T` to the `updateLimno()` function call.
+
+## Questions?
+
+Contact Kaija (gahmk@caryinstitute.org) with question/troubleshooting. You can also talk to Randi and/or Stuart.
 
 
 
