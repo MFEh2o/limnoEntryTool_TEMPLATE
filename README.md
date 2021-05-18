@@ -121,7 +121,11 @@ Finally, you can "Push" your changes to GitHub by clicking the green "Push" arro
 
 It might seem a little redundant to commit and then immediately push. Typically, you can make a bunch of commits before pushing, but that's more relevant when you're actively developing a piece of software. When you use the entry tool, you're more likely to run it each time with minimal changes, generating new output files and modifying log files each time, so it makes sense to push each time you commit. But it's not critical--if you forget to push, you can just commit the next day's datasheets and then push then. No worries.
 
-I wrote this whole example assuming that you'll make your first commit after both setting up the entry tool *and* running the script for the first time. That's a fine way to do it, but if you prefer, you can also make one commit after just the setup part (after adding the database file and sample sheets but before running the tool) and another one after running the tool for the first time. Or, you can make one commit per file modified, if you'd like to leave a different commit message for each file. It's totally up to you! Again, because your changes will usually be relatively straightforward, the details of when and how you commit are not super important.
+### Recommended workflow for saving changes
+
+In general, you should aim to commit and push your changes after each time that you run the tool, i.e. every day or every other day or however often you enter your new data sheets.
+
+I wrote this whole example assuming that you'll make your first commit after both setting up the entry tool *and* running the script for the first time. That's a fine way to do it, but if you prefer, you can also make one commit after just the setup part (after adding the database file and sample sheets but before running the tool) and another one after running the tool for the first time. Or, you can make one commit per file modified, if you'd like to leave a different commit message for each file. 
 
 ## Questions?
 
