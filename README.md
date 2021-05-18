@@ -141,5 +141,12 @@ I hope that's a helpful introduction. If you want more information about committ
 
 Contact Kaija (gahmk@caryinstitute.org) with questions for troubleshooting help. If you're reading this while Kaija still works at Cary, definitely contact her! This is literally her job. If you're reading this after Kaija has left to go to grad school, try the above resources first, or talk to Chris, Stuart, or Randi.
 
+## When can I modify this template repository?
 
+I've said above that you should not modify this template repository for regular seasonal data entry.
 
+This template repository can and should be modified if you want to make changes to the tool itself. For example, if something about the tool is broken and needs to be fixed, you should clone the repository to your computer by creating a new R Project with version control and copy/pasting https://github.com/MFEh2o/limnoEntryTool_TEMPLATE into the URL slot. Then you should make the code changes and commit/push them to modify the template. (Or you can fork the repo and work with pull requests--If you're modifying the template, I'm going to assume you know your way around GitHub).
+
+Another case where you'd want to modify the template is if you need to change or expand the allowed parameters and ranges that are built into the tool. For example, checks.R contains minimum and maximum numbers for the profile range checks. Maybe you decide that 0 and 35 are no longer reasonable minima and maxima for lake water temperature, and you need to change those. In that case, you'd clone the repo and make the change to checks.R, and then commit that. Then, future years will copy the updated template and use those updated parameters.
+
+Of course, you could make changes like this directly to the year-specific repo you created from the template, but keep in mind that those changes won't be permanent--you'd have to keep track of them and re-do them in the following year. Don't do that to yourself. Trust me.
