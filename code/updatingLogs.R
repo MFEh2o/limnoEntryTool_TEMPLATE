@@ -14,10 +14,12 @@ db <- "CHANGE THIS" # name of the database file you're using. Try to use one wit
 funcdir <- here("code") # folder where the functions are stored
 sampleSheetsDir <- here("sampleSheets")
 logFilesDir <- here("logFiles")
+labelsDir <- here("labels")
 
 # Run the tool ------------------------------------------------------------
 updateLimno(dbdir = dbdir, 
             db = db, 
             sampleSheetsDir = sampleSheetsDir, 
             logFilesDir = logFilesDir, 
-            funcdir = funcdir)
+            funcdir = funcdir,
+            labelsDir = labelsDir)

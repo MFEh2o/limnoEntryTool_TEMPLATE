@@ -17,6 +17,7 @@ Sys.setenv(tz = "America/Chicago")
 
 # updateLimno function ----------------------------------------------------
 updateLimno <- function(dbdir, db, funcdir, logFilesDir, sampleSheetsDir,
+                        labelsDir,
                         force_lakeID = F, force_siteID = F, 
                         force_metadataID = F, force_newProjectID = F,
                         force_retiredProjectID = F,
@@ -777,14 +778,14 @@ updateLimno <- function(dbdir, db, funcdir, logFilesDir, sampleSheetsDir,
     message("Passed checks! Writing files...")
     
     # WRITE INFO TO EXCEL SHEETS FOR PRINTING LABELS --------------------------
-    write.xlsx(bpLABS, here("labels", "bpLabels.xlsx"))
-    write.xlsx(chlLABS, here("labels", "chlLabels.xlsx"))
-    write.xlsx(docLABS, here("labels", "docLabels.xlsx"))
-    write.xlsx(fdLABS, here("labels", "filteredLabels.xlsx"))
-    write.xlsx(pocLABS, here("labels", "pocLabels.xlsx"))
-    write.xlsx(ufdLABS, here("labels", "unfilteredLabels.xlsx"))
-    write.xlsx(colorLABS, here("labels", "colorLabels.xlsx"))
-    if(!is.na(header$zoopDepth)){write.xlsx(zoopLABS, here("labels", "zoopLabels.xlsx"))}
+    write.xlsx(bpLABS, here(labelsDir, "bpLabels.xlsx"))
+    write.xlsx(chlLABS, here(labelsDir, "chlLabels.xlsx"))
+    write.xlsx(docLABS, here(labelsDir, "docLabels.xlsx"))
+    write.xlsx(fdLABS, here(labelsDir, "filteredLabels.xlsx"))
+    write.xlsx(pocLABS, here(labelsDir, "pocLabels.xlsx"))
+    write.xlsx(ufdLABS, here(labelsDir, "unfilteredLabels.xlsx"))
+    write.xlsx(colorLABS, here(labelsDir, "colorLabels.xlsx"))
+    if(!is.na(header$zoopDepth)){write.xlsx(zoopLABS, here(labelsDir, "zoopLabels.xlsx"))}
     
     # WRITE NEW IN-SEASON DATABASE FILES TO TXT -------------------------------
     ## samples and profiles
