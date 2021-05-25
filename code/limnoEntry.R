@@ -397,6 +397,7 @@ updateLimno <- function(dbdir, db, funcdir, logFilesDir, sampleSheetsDir,
                # assign a different metadataID for staff gauge samples vs. others:
                metadataID = case_when(depthClass == "Staff" ~ staffGaugeMetadataID,
                                       TRUE ~ header$metadataID),
+               lakeID = header$lakeID,
                dateSample = header$dateSample,
                dateTimeSample = header$dateTimeSample,
                entryFile = file,
