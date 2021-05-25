@@ -76,12 +76,12 @@ newLakeIDsCheck <- function(tc = toCompile, db = samplesDB, is = samplesIS,
   # Separate just-added data from previous data
   new <- is %>%
     filter(entryFile %in% tc) %>%
-    {if(!"lakeID" %in% names(.)) mutate(., lakeID = stringr::word(sampleID, 1, 1, sep = "_"))}
+    {if(!"lakeID" %in% names(.)) mutate(., lakeID = stringr::word(sampleID, 1, 1, sep = "_")) else .}
   old <- is %>%
     filter(!entryFile %in% tc) %>%
-    {if(!"lakeID" %in% names(.)) mutate(., lakeID = stringr::word(sampleID, 1, 1, sep = "_"))}
+    {if(!"lakeID" %in% names(.)) mutate(., lakeID = stringr::word(sampleID, 1, 1, sep = "_")) else .}
   db <- db %>%
-    {if(!"lakeID" %in% names(.)) mutate(., lakeID = stringr::word(sampleID, 1, 1, sep = "_"))}
+    {if(!"lakeID" %in% names(.)) mutate(., lakeID = stringr::word(sampleID, 1, 1, sep = "_")) else .}
   
   # Get just the new lakeID's and the files they come from
   problemRows <- new %>%
@@ -359,7 +359,7 @@ inletOutletCheck <- function(tc = toCompile, db = samplesDB, is = samplesIS,
 
 # filterVolumesCheck ------------------------------------------------------
 filterVolumesCheck <- function(vl = volumesList, f = force_volumeFiltered){
-  assertList(vl, names = T, any.missing = F, null.ok = F)
+  assertList(vl, names = "named", any.missing = F, null.ok = F)
   assertLogical(f, len = 1)
   
   # Get a full data frame of non-zero volumes from the `volumesList` object
@@ -431,7 +431,7 @@ profileRangeCheck <- function(p = profDataList, ft = force_profileTemp,
                               fdm = force_profileDOmgL, fds = force_profileDOsat,
                               fs = force_profileSpC, fph = force_profilePH,
                               fo = force_profileORP, fpa = force_profilePAR){
-  assertList(p, any.missing = F, null.ok = F, names = T)
+  assertList(p, any.missing = F, null.ok = F, names = "named")
   
   # Make profDataList into a data frame
   pdf <- map2(.x = p,
