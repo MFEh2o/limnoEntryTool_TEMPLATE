@@ -72,9 +72,6 @@ updateLimno <- function(dbdir, db, funcdir, logFilesDir, sampleSheetsDir,
   if("samplesIS.csv" %in% logFiles){
     samplesIS <- customReadCSV(file.path(logFilesDir, "samplesIS.csv"))
     assertDataFrame(samplesIS)
-    assertSetEqual(names(samplesIS), 
-                   names(samplesDB %>% 
-                           rename(entryFile = "updateID")))
   }else{
     # creates an empty df w/ same col names as samplesDB
     samplesIS <- samplesDB[FALSE,] %>% rename(entryFile = "updateID") 
@@ -83,9 +80,6 @@ updateLimno <- function(dbdir, db, funcdir, logFilesDir, sampleSheetsDir,
   if("profilesIS.csv" %in% logFiles){
     profilesIS <- customReadCSV(file.path(logFilesDir, "profilesIS.csv"))
     assertDataFrame(profilesIS)
-    assertSetEqual(names(profilesIS), 
-                   names(profilesDB %>% 
-                           rename(entryFile = "updateID")))
   }else{
     # creates an empty df w/ same col names as profilesDB
     profilesIS <- profilesDB[FALSE,] %>% rename(entryFile = "updateID") 
