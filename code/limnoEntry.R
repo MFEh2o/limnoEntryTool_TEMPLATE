@@ -272,8 +272,8 @@ updateLimno <- function(dbdir, db, funcdir, logFilesDir, sampleSheetsDir,
       # PML samples
       # if there is PML data, generate new rows and add them to samplesNEW
       if(sum(!is.na(profData$PML)) > 0){
-        pml_depthTop <- min(profData$depth, na.rm = T) # top depth
-        pml_depthBottom <- max(profData$depth, na.rm = T) # bottom depth
+        pml_depthTop <- min(profData$depth[!is.na(profData$PML)], na.rm = T) # top depth
+        pml_depthBottom <- max(profData$depth[!is.na(profData$PML)], na.rm = T) # bottom depth
         ## Generate
         pmlSamples <- data.frame(depthClass = "PML",
                                  depthTop = pml_depthTop,
@@ -292,8 +292,8 @@ updateLimno <- function(dbdir, db, funcdir, logFilesDir, sampleSheetsDir,
       # hypo samples
       # if there is hypo data, generate new rows and add them to samplesNEW
       if(sum(!is.na(profData$hypo)) > 0){
-        hypo_depthTop <- min(profData$depth, na.rm = T)
-        hypo_depthBottom <- max(profData$depth, na.rm = T)
+        hypo_depthTop <- min(profData$depth[!is.na(profData$hypo)], na.rm = T)
+        hypo_depthBottom <- max(profData$depth[!is.na(profData$hypo)], na.rm = T)
         ## Generate
         hypoSamples <- data.frame(depthClass = "hypo",
                                   depthTop = hypo_depthTop,
