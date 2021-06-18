@@ -119,7 +119,7 @@ So, you can go ahead and check the checkboxes for all those files (just make sur
 
 Now that the boxes are checked, click the "Commit" button. A new window will pop up that shows your staged files again, along with an overview of your changes (insertions in green, deletions in red) at the bottom (you can see the changes for each file by clicking on its name in the top left panel). At the top right, you need to enter a "Commit mesasage"--a brief note about what change(s) you made. This is mandatory. Try to keep it under 50 characters (the maximum that will display on GitHub) and keep it short and sweet.
 
-Something like '2021 setup and processing first 3 sample sheets' could work as a good first commit message.
+Something like '2021 setup and processing first 3 sample sheets' could work as a good first commit message. Ideally, keep it under 50 characters, but that's not critical.
 
 Then click the "Commit" button to save your changes to the Git version control system.
 
