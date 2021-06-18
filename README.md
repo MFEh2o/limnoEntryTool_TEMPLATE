@@ -20,7 +20,7 @@ Basically, we're going to be following the instructions [here](https://docs.gith
 
 4. In the field next to the owner, set a name for the new repository. I recommend **limnoEntryTool_2021** (or whichever year you're entering data for).
 
-5. By default, the repository will be private (i.e. viewable only by members of the MFEh2o "organization" on GitHub). I'm not sure about private vs. public--maybe leave it private for now and we can discuss later?
+5. By default, the repository will be private (i.e. viewable only by members of the MFEh2o "organization" on GitHub).
 
 6. Don't bother selecting "Include all branches"--you don't need that.
 
