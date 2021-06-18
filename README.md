@@ -80,7 +80,7 @@ So, to be clear, when you're done that line should look like this (with the name
 db <- "MFEdb_20200530.db" # name of the database file you're using. Try to use one with a specific date to make the workflow clear. For example, "MFEdb_20200530.db"
 ```
 
-2. Run the script! Pay attention to warnings and errors that come up in the console. If you get errors related to e.g. trying to add a new lake or site that isn't already in the database, you can re-run the script after adding parameters like `force_lakeID = T` or `force_siteID = T` to the `updateLimno()` function call.
+2. Run the script! Pay attention to warnings and errors that come up in the console. If you get errors related to e.g. trying to add a new lake or site that isn't already in the database, you can re-run the script after adding parameters like `force_lakeID = T` or `force_siteID = T` to the `updateLimno()` function call. **If you use any force_* parameters, be sure to note them manually in the 'force log' that will be created for each year the tool is used.** The database manager will be able to look back at this force log and correct any errors after the fact.
 
 ## Saving your changes to GitHub
 
