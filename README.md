@@ -14,7 +14,7 @@ Basically, we're going to be following the instructions [here](https://docs.gith
 
 <img width="911" alt="Using this repository as a template" src="https://user-images.githubusercontent.com/37053323/118301989-ae374180-b4b1-11eb-9dc9-859191740b8a.png">
 
-3. In the dropdown menu, select the GitHub account that you would like to have as the owner of this repository. You can leave that as MFEh2o, or you can use your own GitHub account. I need to look more into what the repercussions of each of those choices will be.
+3. In the dropdown menu, select the GitHub account that you would like to have as the owner of this repository. You can leave that as MFEh2o.
 
 <img width="430" alt="Choosing an owner for the repository" src="https://user-images.githubusercontent.com/37053323/118302217-f191b000-b4b1-11eb-9fc3-29c60de56e8e.png">
 
