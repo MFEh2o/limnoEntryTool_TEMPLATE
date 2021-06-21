@@ -602,7 +602,35 @@ checkCurMisspellings <- function(x){
   }
 }
 
-
+# checkMoieties -----------------------------------------------------------
+# Checks that the DOC and chloro rows have 0's or 2's, not 1's or any other number. If they find another number, throw error and allow a force.
+checkMoieties <- function(m, fd = force_DOCReplicates, fc = force_chloroReplicates){
+  # Check inputs
+  assertDataFrame(m)
+  assertSubset(c("DOC", "chloro"), choices = row.names(m))
+  
+  # DOC
+  if(any(!as.numeric(as.vector(moieties["DOC",])) %in% c(0, 2))){
+    if(fd == FALSE){
+      stop(paste0("Found values other than 0 or 2 in the DOC row of moieties for the following columns:\n\n",
+                  paste(names(moieties)[which(!(moieties["DOC",] 
+                                                %in% c(0, 2)))], collapse = ", "),
+                  "\n\nIf you're sure you took a different number of replicates, use ",
+                  deparse(substitute(fd)), "."))
+    }
+  }
+  
+  # Chlorophyll
+  if(any(!as.numeric(as.vector(moieties["chloro",])) %in% c(0, 2))){
+    if(fc == FALSE){
+      stop(paste0("Found values other than 0 or 2 in the chloro row of moieties for the following columns:\n\n",
+                  paste(names(moieties)[which(!(moieties["chloro",] 
+                                                %in% c(0, 2)))], collapse = ", "),
+                  "\n\nIf you're sure you took a different number of replicates, use ",
+                  deparse(substitute(fc)), "."))
+    }
+  }
+}
 
 
 

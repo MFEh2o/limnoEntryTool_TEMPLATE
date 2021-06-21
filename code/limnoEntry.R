@@ -26,7 +26,8 @@ updateLimno <- function(dbdir, db, funcdir, logFilesDir, sampleSheetsDir,
                         force_volumeFiltered = F, force_profileTemp = F, 
                         force_profileDOmgL = F, force_profileDOsat = F, 
                         force_profileSpC = F, force_profilePH = F,
-                        force_profileORP = F, force_profilePAR = F){
+                        force_profileORP = F, force_profilePAR = F,
+                        force_DOCReplicates = F, force_chloroReplicates = F){
   
   # Check the input values
   assertCharacter(dbdir, len = 1)
@@ -223,6 +224,7 @@ updateLimno <- function(dbdir, db, funcdir, logFilesDir, sampleSheetsDir,
       moieties <- getMoieties(cur)
       assertDataFrame(moieties)
       assertSetEqual(names(moieties), expectedMoieties, ordered = T)
+      checkMoieties(moieties, fd = force_DOCReplicates, fc = force_chloroReplicates)
       
       ## Volumes
       volumes <- getVolumes(cur)
