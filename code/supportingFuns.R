@@ -375,7 +375,7 @@ dataRows <- function(idName, idPrefix, idStart = curID, rowName,
     mutate(sampleID = paste(lakeID, site, dss, tss,
                             depthClass, depthBottom, metadataID, sep = "_")) %>%
     # Add a `replicate` column only if replicates = T
-    {if(addReplicates == TRUE) {group_by(., depthClass) %>%
+    {if(addReplicates == TRUE) {group_by(., site, depthClass) %>%
         mutate(replicate = 1:n()) %>%
         ungroup()} else .} %>%
     # Put the columns in the right order
