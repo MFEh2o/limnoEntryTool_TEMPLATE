@@ -10,7 +10,7 @@ repeatSampleIDsCheck <- function(tc = toCompile, db = samplesDB, is = samplesIS)
   assertDataFrame(is)
   assertSubset(c("entryFile", "sampleID"), names(is))
   assertChoice("sampleID", names(db))
-
+  
   # Separate just-added data from previous data
   new <- is %>%
     filter(entryFile %in% tc)
@@ -27,8 +27,8 @@ repeatSampleIDsCheck <- function(tc = toCompile, db = samplesDB, is = samplesIS)
   if(nrow(problemRows) > 0){
     stop(paste0("You are attempting to add sampleIDs to the in-season database that already exist in the database or in-season database. Here are the sampleID's, and the files they come from: \n\n",
                 paste0(capture.output(problemRows), collapse = "\n")
-                )
-         )
+    )
+    )
   }
 }
 
@@ -72,7 +72,7 @@ newLakeIDsCheck <- function(tc = toCompile, db = samplesDB, is = samplesIS,
   assertDataFrame(is)
   assertLogical(f, len = 1)
   assertChoice("entryFile", names(is))
-
+  
   # Separate just-added data from previous data
   new <- is %>%
     filter(entryFile %in% tc) %>%
@@ -118,14 +118,14 @@ newProjectIDsCheck <- function(tc = toCompile, db = samplesDB, is = samplesIS,
   
   # Get just the new projectID's and the files they come from
   problemRows <- new %>%
-    filter(!projectID %in% c(db$projectID, old$projectID)) %>%
+    filter(!as.character(projectID) %in% c(as.character(db$projectID), as.character(old$projectID))) %>%
     select(projectID, entryFile) %>%
     distinct()
   
   # If there are new projectIDs, throw error and print the new projectIDs
   if(nrow(problemRows) > 0){
     if(f == FALSE){
-      stop(paste0("You are attempting to add projectID's to the in-season database that do not exist in either the MFE databse or the in-season database. Here are the projectID's, and the files they come from: \n\n",
+      stop(paste0("You are attempting to add projectID's to the in-season database that do not exist in either the database SAMPLES or the in-season database. Here are the projectID's, and the files they come from: \n\n",
                   paste0(capture.output(problemRows), collapse = "\n"),
                   "\n\n If you are sure these projectID's are valid, use the force_newProjectID argument."))
     }
@@ -139,7 +139,7 @@ retiredProjectIDsCheck <- function(tc = toCompile, is = samplesIS,
   assertDataFrame(is)
   assertLogical(f, len = 1)
   assertSubset(c("entryFile", "projectID"), names(is))
-
+  
   # Separate just-added data from previous data
   new <- is %>%
     filter(entryFile %in% tc)
@@ -167,7 +167,7 @@ sampleTimesCheck <- function(tc = toCompile, is = samplesIS,
   assertDataFrame(is)
   assertLogical(f, len = 1)
   assertSubset(c("entryFile", "sampleID"), names(is))
-
+  
   # Separate just-added data from previous data
   new <- is %>%
     filter(entryFile %in% tc)
@@ -610,22 +610,22 @@ checkMoieties <- function(m, fd = force_DOCReplicates, fc = force_chloroReplicat
   assertSubset(c("DOC", "chloro"), choices = row.names(m))
   
   # DOC
-  if(any(!as.numeric(as.vector(moieties["DOC",])) %in% c(0, 2))){
+  if(any(!as.numeric(as.vector(m["DOC",])) %in% c(0, 2))){
     if(fd == FALSE){
       stop(paste0("Found values other than 0 or 2 in the DOC row of moieties for the following columns:\n\n",
-                  paste(names(moieties)[which(!(moieties["DOC",] 
-                                                %in% c(0, 2)))], collapse = ", "),
+                  paste(names(m)[which(!(m["DOC",] 
+                                         %in% c(0, 2)))], collapse = ", "),
                   "\n\nIf you're sure you took a different number of replicates, use ",
                   deparse(substitute(fd)), "."))
     }
   }
   
   # Chlorophyll
-  if(any(!as.numeric(as.vector(moieties["chloro",])) %in% c(0, 2))){
+  if(any(!as.numeric(as.vector(m["chloro",])) %in% c(0, 2))){
     if(fc == FALSE){
       stop(paste0("Found values other than 0 or 2 in the chloro row of moieties for the following columns:\n\n",
-                  paste(names(moieties)[which(!(moieties["chloro",] 
-                                                %in% c(0, 2)))], collapse = ", "),
+                  paste(names(m)[which(!(m["chloro",] 
+                                         %in% c(0, 2)))], collapse = ", "),
                   "\n\nIf you're sure you took a different number of replicates, use ",
                   deparse(substitute(fc)), "."))
     }
