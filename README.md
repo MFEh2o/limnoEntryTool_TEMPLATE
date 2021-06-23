@@ -82,7 +82,7 @@ db <- "MFEdb_20200530.db" # name of the database file you're using. Try to use o
 
 2. Run the script! Pay attention to warnings and errors that come up in the console. 
 
-4. If you get errors related to e.g. trying to add a new lake or site that isn't already in the database, make sure to double-check the error messages. They will flag which data is problematic and which data sheet(s) it came from. You should take a look and figure out whether there's missing information you need to fill in, or whether the information is actually correct and you just need to 'force' it past the tool's flags. If you need to force, here's how:
+3. If you get errors related to e.g. trying to add a new lake or site that isn't already in the database, make sure to double-check the error messages. They will flag which data is problematic and which data sheet(s) it came from. You should take a look and figure out whether there's missing information you need to fill in, or whether the information is actually correct and you just need to 'force' it past the tool's flags. If you need to force, here's how:
 
 First, check the error message to determine which `force_*` argument to use. Then, **in the console** (not in the script), press the up arrow key to retrieve the last command you ran, which should be the `updateLimno()` function. Add the relevant `force_*` parameter to the function call in the console, setting its value to `TRUE` or `T`. For example, if the error you got was about trying to add a new siteID, you'd do this: 
 
