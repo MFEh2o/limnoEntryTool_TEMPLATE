@@ -843,10 +843,11 @@ updateLimno <- function(dbdir, db, funcdir, logFilesDir, sampleSheetsDir,
     # WRITE NEW IN-SEASON DATABASE FILES TO TXT -------------------------------
     ## samples and profiles
     write.csv(samplesIS, here(logFilesDir, "samplesIS.csv"), row.names = FALSE)
-    write.csv(profilesIS %>% 
-                select(-entryFile),  # remove the temporary entryFile column
-              here(logFilesDir, "profilesIS.csv"), row.names = FALSE)
-    
+    if(exists("profilesNEW")){
+      write.csv(profilesIS %>% 
+                  select(-entryFile),  # remove the temporary entryFile column
+                here(logFilesDir, "profilesIS.csv"), row.names = FALSE)
+    }
     ## other log files
     write.csv(bpIS, here(logFilesDir, "bpLogFile.csv"), row.names = FALSE)
     write.csv(chlIS, here(logFilesDir, "chlLogFile.csv"), row.names = FALSE)
