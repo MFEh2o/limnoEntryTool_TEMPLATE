@@ -81,6 +81,19 @@ fdInit <- data.frame(filteredID = "F0",
                      sampleID = "ZZ_zzz_NA_9999_surface_0_fishScapesLimno.20190319",
                      metadataID = NA)
 
+ionInit <- data.frame(ionsID = "I0",
+                     projectID = 99999,
+                     lakeID = "ZZ",
+                     site = "zzz",
+                     dateSample = "2222-22-22",
+                     timeSample = "99:99",
+                     depthClass = "surface",
+                     depthTop = 0,
+                     depthBottom = 0,
+                     comments = "aaa",
+                     sampleID = "ZZ_zzz_NA_9999_surface_0_fishScapesLimno.20190319",
+                     metadataID = NA)
+
 pocInit <- data.frame(pocID = "P0",
                       projectID = 99999,
                       lakeID = "ZZ",
@@ -164,10 +177,14 @@ getProfData <- function(d = cur){
   profData <- profData %>%
     mutate(across(everything(), as.numeric))
   
-  # remove any data that's all NA except for the depth
+  # remove any data that's all NA except for the depth, unless there is no profile data (all NAs), then return a single-row data frame filled with NAs
+  if(any(!is.na(profData[,-1]))){
   profData <- profData %>%
     filter(!(rowSums(is.na(select(., -depth))) == 
                ncol(.) - 1))
+  }else{
+    profData=data.frame(depth=0,temp=NA,DOmgL=NA,DOsat=NA,SpC=NA,pH=NA,ORP=NA,PAR=NA,PML=NA,hypo=NA,point=NA)
+  }
   
   return(profData)
 }
@@ -189,8 +206,8 @@ getGauges <- function(d = cur){
 
 # Get moieties data from the data sheet -----------------------------------
 getMoieties <- function(d = cur){
-  moieties <- d[2:8, 5:11]
-  row.names(moieties) <- d[2:8, 4]
+  moieties <- d[2:9, 5:11]
+  row.names(moieties) <- d[2:9, 4]
   names(moieties) <- d[1, 5:11]
   moieties <- moieties %>%
     mutate(across(everything(), as.numeric))
@@ -203,9 +220,9 @@ getMoieties <- function(d = cur){
 getVolumes <- function(d = cur){
   assertDataFrame(d, min.rows = 12, ncols = 11)
   
-  volumes <- d[10:12, 5:11]
-  row.names(volumes) <- d[10:12, 4]
-  names(volumes) <- d[9, 5:11]
+  volumes <- d[11:13, 5:11]
+  row.names(volumes) <- d[11:13, 4]
+  names(volumes) <- d[10, 5:11]
   volumes <- volumes %>%
     mutate(across(everything(), as.numeric))
   
@@ -364,20 +381,24 @@ dataRows <- function(idName, idPrefix, idStart = curID, rowName,
                               seq(from = idStart,
                                   length.out = nrow(.))),
            projectID = h$projectID,
-           lakeID = h$lakeID,
            dateSample = h$dateSample,
            timeSample = h$timeSample,
            metadataID = h$metadataID,
            comments = NA) %>%
     # If these are color rows, add abs440 and g440
     {if(rowName == "color") mutate(., abs440 = NA, g440 = NA) else .} %>%
-    # Create sampleID's
-    mutate(sampleID = paste(lakeID, site, dss, tss,
-                            depthClass, depthBottom, metadataID, sep = "_")) %>%
     # Add a `replicate` column only if replicates = T
     {if(addReplicates == TRUE) {group_by(., site, depthClass) %>%
         mutate(replicate = 1:n()) %>%
-        ungroup()} else .} %>%
+        ungroup()} else .} 
+  
+    # deal with lakeID (lakes v. streams)
+    rows$lakeID = unlist(lapply(strsplit(rows$site,"_"),function(x){return(x[1])}))
+    rows$lakeID[rows$site==h$siteName] = h$lakeID
+    # Create sampleID's
+    rows$sampleID = paste(rows$lakeID, rows$site, dss, tss,rows$depthClass, rows$depthBottom, rows$metadataID, sep = "_")
+  
+    rows <- rows %>%
     # Put the columns in the right order
     select(names(templateDF)) %>%
     as.data.frame()

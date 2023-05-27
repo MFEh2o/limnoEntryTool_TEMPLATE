@@ -119,6 +119,14 @@ updateLimno <- function(dbdir, db, funcdir, logFilesDir, sampleSheetsDir,
   }else{
     fdIS <- fdInit
   }
+  # check for ions log file
+  if("ionsLogFile.csv" %in% logFiles){
+    ionIS <- customReadCSV(file.path(logFilesDir, "ionsLogFile.csv"))
+    assertDataFrame(ionIS)
+    assertSetEqual(names(ionIS), names(ionInit),ordered=T)
+  }else{
+    ionIS <- ionInit
+  }
   # check for POC log file
   if("pocLogFile.csv" %in% logFiles){ 
     pocIS <- customReadCSV(file.path(logFilesDir, "pocLogFile.csv"))
@@ -170,6 +178,7 @@ updateLimno <- function(dbdir, db, funcdir, logFilesDir, sampleSheetsDir,
     chlLABS <- data.frame()
     docLABS <- data.frame()
     fdLABS <- data.frame()
+    ionLABS <- data.frame()
     pocLABS <- data.frame()
     ufdLABS <- data.frame()
     colorLABS <- data.frame()
@@ -202,7 +211,6 @@ updateLimno <- function(dbdir, db, funcdir, logFilesDir, sampleSheetsDir,
       # Pull the header info
       header <- getHeader(cur)
       assertList(header, all.missing = F, len = 11)
-      checkHeader(header)
       
       # Tabular data ------------------------------------------------------------
       # Data is retrieved using a series of get*Data functions, which are defined in supportingFuns.R
@@ -213,25 +221,35 @@ updateLimno <- function(dbdir, db, funcdir, logFilesDir, sampleSheetsDir,
       if(all(is.na(profData$depth))){
         stop("All depths in profData are NA.")
       }
+      
       profDataList[[file]] <- profData # add data to the list so we can check at the end
       
       ## Gauges
       gauges <- getGauges(cur)
       assertDataFrame(gauges)
-      assertSetEqual(names(gauges), expectedGauges, ordered = T)
+      # removed this check because stream site names can now be provided in the entered datasheet
+      #assertSetEqual(names(gauges), expectedGauges, ordered = T)
       
       ## Moieties
       moieties <- getMoieties(cur)
       assertDataFrame(moieties)
-      assertSetEqual(names(moieties), expectedMoieties, ordered = T)
+      # removed this check because stream site names can now be provided in the entered datasheet
+      #assertSetEqual(names(moieties), expectedMoieties, ordered = T)
       checkMoieties(moieties, fd = force_DOCReplicates, fc = force_chloroReplicates)
       
       ## Volumes
       volumes <- getVolumes(cur)
       assertDataFrame(volumes)
-      assertSetEqual(names(volumes), expectedVolumes, ordered = T)
+      # removed this check because stream site names can now be provided in the entered datasheet
+      #assertSetEqual(names(volumes), expectedVolumes, ordered = T)
       # save volumes to volumesList
       volumesList[[file]] <- volumes
+      
+      
+      # checkHeader if non-stream data present; need to add a second checkHeader function for case with only stream samples
+      if(any(!is.na(profData[,-1])) | any(moieties[,c(1:2,7)]>0)){
+        checkHeader(header)
+      }    
       
       # Date and time -----------------------------------------------------------------
       # dateSample
@@ -328,33 +346,25 @@ updateLimno <- function(dbdir, db, funcdir, logFilesDir, sampleSheetsDir,
         assertDataFrame(samplesNEW, ncols = ncol(samplesIS))
       }
       
-      # Outlet samples
-      # if there is outlet data, generate new rows and add them to samplesNEW
-      if(any(moieties$Outlet > 0)){ # if there is any outlet data
-        ## Generate
-        outletSamples <- data.frame(depthClass = "surface",
+      #### Stream samples
+      ## only allows a max of 4 stream sites at this time
+      ## should create some functions to be more consistent with Kaija's code, but not doing that now (summer 2023, SEJ)
+      streams<-moieties[,3:6]
+      
+      if(any(streams>0)){
+        streamsSampled <- names(streams)[colSums(streams)>0]
+        
+        lakeID4streams<-unlist(lapply(strsplit(streamsSampled,"_"),function(x){return(x[1])}))
+        
+        streamSamples <- data.frame(lakeID = lakeID4streams,
+                                    siteID=streamsSampled,
+                                    depthClass = rep("surface",length(streamsSampled)),
                                     depthTop = 0,
                                     depthBottom = 0)
+      
         ## Add
         samplesNEW <- bind_rows(tochar(samplesNEW), 
-                                tochar(outletSamples))
-        assertDataFrame(samplesNEW, ncols = ncol(samplesIS))
-      } 
-      
-      # Inlet samples
-      # if there is inlet data, generate new rows and add them to samplesNEW
-      inletsSampled <- moieties %>% select(contains("Inlet") & 
-                                             where(function(x) sum(x) > 0)) %>% 
-        names() # which inlets were sampled?
-      assertCharacter(inletsSampled, any.missing = FALSE)
-      if(length(inletsSampled) > 0){
-        ## Generate
-        inletSamples <- data.frame(depthClass = rep("surface", 
-                                                    length(inletsSampled)),
-                                   depthTop = 0,
-                                   depthBottom = 0)
-        ## Add
-        samplesNEW <- bind_rows(tochar(samplesNEW), tochar(inletSamples))
+                                tochar(streamSamples))
         assertDataFrame(samplesNEW, ncols = ncol(samplesIS))
       }
       
@@ -379,38 +389,40 @@ updateLimno <- function(dbdir, db, funcdir, logFilesDir, sampleSheetsDir,
         gaugesSampled[gaugesSampled == "lake"] <- "WholeLake"
         
         ## Generate
-        gaugeSamples <- data.frame(depthClass = "Staff",
+        gaugeSamples <- data.frame(lakeID=NA,
+                                   siteID=NA,
+                                   depthClass = rep("Staff",length(gaugesSampled)),
                                    depthTop = 0,
                                    depthBottom = 0)
+        gaugeSamples$lakeID[grepl("stream",gaugesSampled)]=lakeID4streams
+        gaugeSamples$siteID[grepl("stream",gaugesSampled)]=streamsSampled
+        
         ## Add
         samplesNEW <- bind_rows(tochar(samplesNEW), tochar(gaugeSamples))
         assertDataFrame(samplesNEW, ncols = ncol(samplesIS))
       }
-      
+
       # Fill in the information in all the other columns in samplesNEW 
       # (sampleID, dateSample, weather, comments, etc.)
       samplesNEW <- samplesNEW %>%
-        mutate(crew = header$crew, weather = header$weather,
+        mutate(projectID = header$projectID,
+               crew = header$crew, weather = header$weather,
                comments = header$comments, 
                # assign a different metadataID for staff gauge samples vs. others:
                metadataID = case_when(depthClass == "Staff" ~ staffGaugeMetadataID,
                                       TRUE ~ header$metadataID),
-               lakeID = header$lakeID,
                dateSample = header$dateSample,
                dateTimeSample = header$dateTimeSample,
-               entryFile = file,
-               siteID = header$siteID,
-               # Construct the sampleID
-               sampleID = paste(siteID, dateSampleString, timeSampleString,
-                                depthClass, depthBottom, header$metadataID, 
-                                sep = "_"))
+               entryFile = file)
+      
+      samplesNEW$lakeID[is.na(samplesNEW$lakeID)] = header$lakeID
+      samplesNEW$siteID[is.na(samplesNEW$siteID)] = header$siteID
+      # Construct the sampleID
+      samplesNEW$sampleID = paste(samplesNEW$siteID, dateSampleString, timeSampleString,
+                       samplesNEW$depthClass, samplesNEW$depthBottom, samplesNEW$metadataID, 
+                       sep = "_")
       
       assertSubset(names(samplesNEW), names(samplesIS)) # check that the names match
-      
-      samplesNEW <- samplesNEW %>%
-        select(names(samplesIS)) %>% # put the columns in the right order
-        mutate(projectID = header$projectID) %>% 
-        relocate(projectID)
       
       # DATA --------------------------------------------------------------------
       # Profile data
@@ -699,6 +711,42 @@ updateLimno <- function(dbdir, db, funcdir, logFilesDir, sampleSheetsDir,
         }
       }
       
+      # ion data rows (non-point samples)
+      if(sum(moieties["ions",]) > 0){
+        curID <- gsub("I", "", ionIS$ionsID) %>% as.numeric() %>% max() + 1
+        ionNEW <- ionIS[FALSE, ] # empty data frame for new color rows
+        
+        ## Non-point rows
+        if(rowSums(moieties["ions",] %>% select(-point)) > 0){
+          ## Generate rows
+          rows <- dataRows(idName = "ionsID", idPrefix = "I", idStart = curID, rowName = "ions", 
+                           addReplicates = F, addVolumes = F, templateDF = ionIS, 
+                           v = volumes, m = moieties, h = header, pt = pml_depthTop,
+                           pb = pml_depthBottom, ht = hypo_depthTop, hb = hypo_depthBottom,
+                           dss = dateSampleString, tss = timeSampleString)
+          ## Add rows
+          ionNEW <- bind_rows(tochar(ionNEW), tochar(rows))
+          assertDataFrame(ionNEW, ncols = ncol(ionIS))
+          
+          ## Update curID
+          curID <- ifelse(nrow(ionNEW) == 0, curID, 
+                          max(as.numeric(gsub("I", "", ionNEW$ionsID))) + 1)
+          assertNumeric(curID, len = 1)
+        }
+        
+        # Color data rows (point samples)
+        if(moieties["ions", "point"] > 0){
+          ## Generate rows
+          rows <- dataRowsPoint(idName = "ionsID", idPrefix = "I", idStart = curID, addReplicates = F,
+                                addVolumes = F, volumesRowName = NULL, templateDF = ionIS, 
+                                color = T, dss = dateSampleString, tss = timeSampleString, 
+                                h = header, v = volumes, p = profData)
+          ## Add rows
+          ionNEW <- bind_rows(tochar(ionNEW), tochar(rows))
+          assertDataFrame(ionNEW, ncols = ncol(ionIS))
+        }
+      }
+      
       # Zooplankton data rows (tow samples)
       if(!is.na(header$zoopDepth)){
         curID <- gsub("Z", "", zoopIS$zoopID) %>% as.numeric() %>% max() + 1
@@ -712,9 +760,10 @@ updateLimno <- function(dbdir, db, funcdir, logFilesDir, sampleSheetsDir,
       # APPEND NEW INFO TO LOG FILES --------------------------------------------
       samplesIS <- bind_rows(tochar(samplesIS), 
                              tochar(samplesNEW))
-      profilesIS <- bind_rows(tochar(profilesIS), 
-                              tochar(profilesNEW))
       
+      if(exists("profilesNEW")){profilesIS <- bind_rows(tochar(profilesIS), 
+                                tochar(profilesNEW))
+      }  
       if(exists("bpNEW")){bpIS <- bind_rows(tochar(bpIS), tochar(bpNEW))}
       if(exists("chlNEW")){chlIS <- bind_rows(tochar(chlIS), tochar(chlNEW))}
       if(exists("docNEW")){docIS <- bind_rows(tochar(docIS), tochar(docNEW))}
@@ -722,6 +771,7 @@ updateLimno <- function(dbdir, db, funcdir, logFilesDir, sampleSheetsDir,
       if(exists("pocNEW")){pocIS <- bind_rows(tochar(pocIS), tochar(pocNEW))}
       if(exists("ufdNEW")){ufdIS <- bind_rows(tochar(ufdIS), tochar(ufdNEW))}
       if(exists("colorNEW")){colorIS <- bind_rows(tochar(colorIS), tochar(colorNEW))}
+      if(exists("ionNEW")){ionIS <- bind_rows(tochar(ionIS),tochar(ionNEW))}
       if(!is.na(header$zoopDepth)){zoopIS <- bind_rows(tochar(zoopIS), tochar(zoopNEW))}
       
       
@@ -734,6 +784,7 @@ updateLimno <- function(dbdir, db, funcdir, logFilesDir, sampleSheetsDir,
       if(exists("pocNEW")){pocLABS <- bind_rows(pocLABS, pocNEW)}
       if(exists("ufdNEW")){ufdLABS <- bind_rows(ufdLABS, ufdNEW)}
       if(exists("colorNEW")){colorLABS <- bind_rows(colorLABS, colorNEW)}
+      if(exists("ionNEW")){ionLABS <- bind_rows(ionLABS,ionNEW)}
       if(!is.na(header$zoopDepth)){zoopLABS <- bind_rows(zoopLABS, zoopNEW)}
       
       print(paste0(file, " complete!"))
@@ -760,9 +811,11 @@ updateLimno <- function(dbdir, db, funcdir, logFilesDir, sampleSheetsDir,
     # Check for new metadataID's
     newMetadataIDsCheck(tc = toCompile, db = samplesDB, 
                         is = samplesIS, f = force_metadataID)
-    # Check for unprecedented depths
-    depthsCheck(tc = toCompile, db = profilesDB, 
-                is = profilesIS, f = force_depth)
+    # Check for unprecedented depths; if profile information
+    if(exists("profilesNEW")){
+      depthsCheck(tc = toCompile, db = profilesDB, 
+                  is = profilesIS, f = force_depth)
+    }
     # Check for new inlets and outlets
     inletOutletCheck(tc = toCompile, db = samplesDB, is = samplesIS, 
                      fi = force_inlet, fo = force_outlet)
@@ -784,6 +837,7 @@ updateLimno <- function(dbdir, db, funcdir, logFilesDir, sampleSheetsDir,
     write.xlsx(pocLABS, here(labelsDir, "pocLabels.xlsx"))
     write.xlsx(ufdLABS, here(labelsDir, "unfilteredLabels.xlsx"))
     write.xlsx(colorLABS, here(labelsDir, "colorLabels.xlsx"))
+    write.xlsx(ionLABS, here(labelsDir, "ionLabels.xlsx"))
     if(!is.na(header$zoopDepth)){write.xlsx(zoopLABS, here(labelsDir, "zoopLabels.xlsx"))}
     
     # WRITE NEW IN-SEASON DATABASE FILES TO TXT -------------------------------
@@ -801,6 +855,7 @@ updateLimno <- function(dbdir, db, funcdir, logFilesDir, sampleSheetsDir,
     write.csv(pocIS, here(logFilesDir, "pocLogFile.csv"), row.names = FALSE)
     write.csv(ufdIS, here(logFilesDir, "unfilteredLogFile.csv"), row.names = FALSE)
     write.csv(colorIS, here(logFilesDir, "colorLogFile.csv"), row.names = FALSE)
+    write.csv(ionIS, here(logFilesDir, "ionsLogFile.csv"),row.names=FALSE)
     write.csv(zoopIS, here(logFilesDir, "zoopLogFile.csv"), row.names = FALSE)
     message("Done!")
   }
