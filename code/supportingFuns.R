@@ -396,7 +396,11 @@ dataRows <- function(idName, idPrefix, idStart = curID, rowName,
     rows$lakeID = unlist(lapply(strsplit(rows$site,"_"),function(x){return(x[1])}))
     rows$lakeID[rows$site==h$siteName] = h$lakeID
     # Create sampleID's
-    rows$sampleID = paste(rows$lakeID, rows$site, dss, tss,rows$depthClass, rows$depthBottom, rows$metadataID, sep = "_")
+    
+    ##********* add ifelse here to deal with lake (build lakeID_site) and stream (use just site)
+    rows$sampleID = ifelse(grepl("_",rows$site),
+                            yes=paste(rows$lakeID, rows$site, dss, tss,rows$depthClass, rows$depthBottom, rows$metadataID, sep = "_"),
+                            no=paste(rows$site, dss, tss,rows$depthClass, rows$depthBottom, rows$metadataID, sep = "_"))
   
     rows <- rows %>%
     # Put the columns in the right order

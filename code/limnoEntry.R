@@ -245,6 +245,8 @@ updateLimno <- function(dbdir, db, funcdir, logFilesDir, sampleSheetsDir,
       # save volumes to volumesList
       volumesList[[file]] <- volumes
       
+      # give volumes the same header names as moieties
+      colnames(volumes)=colnames(moieties)
       
       # checkHeader if non-stream data present; need to add a second checkHeader function for case with only stream samples
       if(any(!is.na(profData[,-1])) | any(moieties[,c(1:2,7)]>0)){
@@ -386,11 +388,11 @@ updateLimno <- function(dbdir, db, funcdir, logFilesDir, sampleSheetsDir,
       if(length(gaugesSampled) > 0){
         # fix the gauge names
         gaugesSampled <- str_remove(gaugesSampled, "_staffGauge") # remove _staffGauge from the gauge names
-        gaugesSampled[gaugesSampled == "lake"] <- "WholeLake"
+        gaugesSampled[gaugesSampled == "lake"] <- paste(header$lakeID,"WholeLake",sep="_")
         
         ## Generate
-        gaugeSamples <- data.frame(lakeID=NA,
-                                   siteID=NA,
+        gaugeSamples <- data.frame(lakeID=header$lakeID,
+                                   siteID=gaugesSampled,
                                    depthClass = rep("Staff",length(gaugesSampled)),
                                    depthTop = 0,
                                    depthBottom = 0)
@@ -417,6 +419,7 @@ updateLimno <- function(dbdir, db, funcdir, logFilesDir, sampleSheetsDir,
       
       samplesNEW$lakeID[is.na(samplesNEW$lakeID)] = header$lakeID
       samplesNEW$siteID[is.na(samplesNEW$siteID)] = header$siteID
+      
       # Construct the sampleID
       samplesNEW$sampleID = paste(samplesNEW$siteID, dateSampleString, timeSampleString,
                        samplesNEW$depthClass, samplesNEW$depthBottom, samplesNEW$metadataID, 
