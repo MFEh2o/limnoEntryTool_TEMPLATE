@@ -1,7 +1,0 @@
-"projectID","sampleID","lakeID","siteName","dateSample","dateTimeSample","depthClass","depthTop","depthBottom","waterHeight","waterHeightUnits","waterHeight_m","metadataID","comments","entryFile","updateID"
-"15","MO_WholeLake_20230314_0830_staff_0_Limno.Sample.20160505","MO","WholeLake","2023-03-14","2023-03-14 08:30:00","staff","0","0","2","ft","0.6096","Limno.Sample.20160505",NA,NA,NA
-"15","MO_Inlet2_20230314_0830_staff_0_Limno.Sample.20160505","MO","Inlet2","2023-03-14","2023-03-14 08:30:00","staff","0","0","25","cm","0.25","Limno.Sample.20160505",NA,NA,NA
-"15","MOST_01234_20230314_0830_staff_0_Limno.Sample.20160505","MOST","01234","2023-03-14","2023-03-14 08:30:00","staff","0","0","32","cm","0.32","Limno.Sample.20160505",NA,NA,NA
-"15","MO_WholeLake_20230314_0830_staff_0_Limno.Sample.20160505","MO","WholeLake","2023-03-14","2023-03-14 08:30:00","staff","0","0","2","ft","0.6096","Limno.Sample.20160505",NA,NA,NA
-"15","MO_Inlet2_20230314_0830_staff_0_Limno.Sample.20160505","MO","Inlet2","2023-03-14","2023-03-14 08:30:00","staff","0","0","25","cm","0.25","Limno.Sample.20160505",NA,NA,NA
-"15","MOST_01234_20230314_0830_staff_0_Limno.Sample.20160505","MOST","01234","2023-03-14","2023-03-14 08:30:00","staff","0","0","32","cm","0.32","Limno.Sample.20160505",NA,NA,NA

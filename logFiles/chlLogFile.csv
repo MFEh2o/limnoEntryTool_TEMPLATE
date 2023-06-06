@@ -1,10 +1,2 @@
-"chlID","projectID","lakeID","site","dateSample","timeSample","depthClass","depthTop","depthBottom","volFiltered","replicate","comments","sampleID","metadataID"
-"C0","99999","ZZ","zzz","2222-22-22","99:99","Surface","0","0","0","1","aaa","ZZ_zzz_NA_9999_Surface_0_fishScapesLimno.20190319",NA
-"C1","15","MO","DeepHole","2023-03-14","08:30","PML","0","1","450","1",NA,"MO_DeepHole_20230314_0830_PML_1_Limno.Sample.20160505","Limno.Sample.20160505"
-"C2","15","MO","DeepHole","2023-03-14","08:30","PML","0","1","450","2",NA,"MO_DeepHole_20230314_0830_PML_1_Limno.Sample.20160505","Limno.Sample.20160505"
-"C3","15","MO","DeepHole","2023-03-14","08:30","hypo","3","3","450","1",NA,"MO_DeepHole_20230314_0830_hypo_3_Limno.Sample.20160505","Limno.Sample.20160505"
-"C4","15","MO","DeepHole","2023-03-14","08:30","hypo","3","3","450","2",NA,"MO_DeepHole_20230314_0830_hypo_3_Limno.Sample.20160505","Limno.Sample.20160505"
-"C5","15","MO","DeepHole","2023-06-06","11:13","PML","0","0.5","450","1",NA,"MO_DeepHole_20230606_1113_PML_0.5_Limno.Sample.20230529","Limno.Sample.20230529"
-"C6","15","MO","DeepHole","2023-06-06","11:13","PML","0","0.5","450","2",NA,"MO_DeepHole_20230606_1113_PML_0.5_Limno.Sample.20230529","Limno.Sample.20230529"
-"C7","15","MO","DeepHole","2023-06-06","11:13","hypo","5","5","450","1",NA,"MO_DeepHole_20230606_1113_hypo_5_Limno.Sample.20230529","Limno.Sample.20230529"
-"C8","15","MO","DeepHole","2023-06-06","11:13","hypo","5","5","450","2",NA,"MO_DeepHole_20230606_1113_hypo_5_Limno.Sample.20230529","Limno.Sample.20230529"
+chlID,projectID,lakeID,site,dateSample,timeSample,depthClass,depthTop,depthBottom,volFiltered,replicate,comments,sampleID,metadataID
+C0,99999,ZZ,zzz,2222-22-22,99:99,Surface,0,0,0,1,aaa,ZZ_zzz_NA_9999_Surface_0_fishScapesLimno.20190319,NA
