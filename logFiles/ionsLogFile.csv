@@ -1,2 +1,10 @@
-ionsID,projectID,lakeID,site,dateSample,timeSample,depthClass,depthTop,depthBottom,comments,sampleID,metadataID
-I0,99999,ZZ,zzz,2222-22-22,99:99,Surface,0,0,aaa,ZZ_zzz_NA_9999_Surface_0_fishScapesLimno.20190319,NA
+"ionsID","projectID","lakeID","site","dateSample","timeSample","depthClass","depthTop","depthBottom","replicate","comments","sampleID","metadataID"
+"I0","99999","ZZ","zzz","2222-22-22","99:99","Surface","0","0","1","aaa","ZZ_zzz_NA_9999_Surface_0_fishScapesLimno.20190319",NA
+"I1","15","MO","MO_Inlet2","2023-03-14","08:30","surface","0","0","1",NA,"MO_Inlet2_20230314_0830_surface_0_Limno.Sample.20160505","Limno.Sample.20160505"
+"I2","15","MOST","MOST_01234","2023-03-14","08:30","surface","0","0","1",NA,"MOST_01234_20230314_0830_surface_0_Limno.Sample.20160505","Limno.Sample.20160505"
+"I3","15","MO","MO_Inlet2","2023-06-06","11:13","surface","0","0","1",NA,"MO_Inlet2_20230606_1113_surface_0_Limno.Sample.20230529","Limno.Sample.20230529"
+"I4","15","MO","MO_Inlet2","2023-06-06","11:13","surface","0","0","2",NA,"MO_Inlet2_20230606_1113_surface_0_Limno.Sample.20230529","Limno.Sample.20230529"
+"I5","15","MOST","MOST_01370","2023-06-06","11:13","surface","0","0","1",NA,"MOST_01370_20230606_1113_surface_0_Limno.Sample.20230529","Limno.Sample.20230529"
+"I6","15","MOST","MOST_01370","2023-06-06","11:13","surface","0","0","2",NA,"MOST_01370_20230606_1113_surface_0_Limno.Sample.20230529","Limno.Sample.20230529"
+"I7","15","MO","MO_Outlet","2023-06-06","11:13","surface","0","0","1",NA,"MO_Outlet_20230606_1113_surface_0_Limno.Sample.20230529","Limno.Sample.20230529"
+"I8","15","MO","MO_Outlet","2023-06-06","11:13","surface","0","0","2",NA,"MO_Outlet_20230606_1113_surface_0_Limno.Sample.20230529","Limno.Sample.20230529"

@@ -61,9 +61,11 @@ updateLimno <- function(dbdir, db, funcdir, logFilesDir, sampleSheetsDir,
   lakesDB <- suppressWarnings(dbTable("LAKES"))
   profilesDB <- suppressWarnings(dbTable("LIMNO_PROFILES"))
   samplesDB <- suppressWarnings(dbTable("SAMPLES"))
+  gagesDB <- suppressWarnings(dbTable("STAFF_GAUGES"))
   assertDataFrame(lakesDB)
   assertDataFrame(profilesDB)
   assertDataFrame(samplesDB)
+  assertDataFrame(gagesDB)
   
   # Check for required input files -----------------------------------------
   logFiles <- list.files(logFilesDir)
@@ -84,6 +86,13 @@ updateLimno <- function(dbdir, db, funcdir, logFilesDir, sampleSheetsDir,
   }else{
     # creates an empty df w/ same col names as profilesDB
     profilesIS <- profilesDB[FALSE,] %>% rename(entryFile = "updateID") 
+  }
+  
+  if("gagesIS.csv" %in% logFiles){
+    gagesIS <- customReadCSV(file.path(logFilesDir, "gagesIS.csv"))
+  }else{
+    #creates an empty df w/ same col names as gagesDB
+    gagesIS <- gagesDB[FALSE,] %>% rename(entryFile = "updateID")
   }
   
   ## LOG FILES: read them in. If they don't exist, then create them.
@@ -245,8 +254,9 @@ updateLimno <- function(dbdir, db, funcdir, logFilesDir, sampleSheetsDir,
       # save volumes to volumesList
       volumesList[[file]] <- volumes
       
-      # give volumes the same header names as moieties
+      # give volumes and gauges the same header or names as moieties
       colnames(volumes)=colnames(moieties)
+      rownames(gauges)[2:5]=colnames(moieties)[3:6] # for matching stream siteIDs
       
       # checkHeader if non-stream data present; need to add a second checkHeader function for case with only stream samples
       if(any(!is.na(profData[,-1])) | any(moieties[,c(1:2,7)]>0)){
@@ -393,11 +403,11 @@ updateLimno <- function(dbdir, db, funcdir, logFilesDir, sampleSheetsDir,
         ## Generate
         gaugeSamples <- data.frame(lakeID=header$lakeID,
                                    siteID=gaugesSampled,
-                                   depthClass = rep("Staff",length(gaugesSampled)),
+                                   depthClass = rep("staff",length(gaugesSampled)),
                                    depthTop = 0,
                                    depthBottom = 0)
-        gaugeSamples$lakeID[grepl("stream",gaugesSampled)]=lakeID4streams
-        gaugeSamples$siteID[grepl("stream",gaugesSampled)]=streamsSampled
+        gaugeSamples$lakeID[!grepl("WholeLake",gaugesSampled)]=lakeID4streams
+        gaugeSamples$siteID[!grepl("WholeLake",gaugesSampled)]=streamsSampled
         
         ## Add
         samplesNEW <- bind_rows(tochar(samplesNEW), tochar(gaugeSamples))
@@ -445,6 +455,14 @@ updateLimno <- function(dbdir, db, funcdir, logFilesDir, sampleSheetsDir,
                                        tss = timeSampleString) %>%
           # add a temporary entryFile column so the check function at the end will work
           mutate(entryFile = file) 
+      }
+      
+      # Staff gage data -> should build a gageDataRows function, but not for now (SEJ, summer 2023)
+      if(any(!is.na(gauges$height))){
+        ## Generate rows
+        gagesNEW <- staffgageDataRows(d=gauges, samps=gaugeSamples, h = header,
+                                  dss = dateSampleString,
+                                  tss = timeSampleString)
       }
       
       # Log file rows
@@ -723,7 +741,7 @@ updateLimno <- function(dbdir, db, funcdir, logFilesDir, sampleSheetsDir,
         if(rowSums(moieties["ions",] %>% select(-point)) > 0){
           ## Generate rows
           rows <- dataRows(idName = "ionsID", idPrefix = "I", idStart = curID, rowName = "ions", 
-                           addReplicates = F, addVolumes = F, templateDF = ionIS, 
+                           addReplicates = T, addVolumes = F, templateDF = ionIS, 
                            v = volumes, m = moieties, h = header, pt = pml_depthTop,
                            pb = pml_depthBottom, ht = hypo_depthTop, hb = hypo_depthBottom,
                            dss = dateSampleString, tss = timeSampleString)
@@ -740,7 +758,7 @@ updateLimno <- function(dbdir, db, funcdir, logFilesDir, sampleSheetsDir,
         # Color data rows (point samples)
         if(moieties["ions", "point"] > 0){
           ## Generate rows
-          rows <- dataRowsPoint(idName = "ionsID", idPrefix = "I", idStart = curID, addReplicates = F,
+          rows <- dataRowsPoint(idName = "ionsID", idPrefix = "I", idStart = curID, addReplicates = T,
                                 addVolumes = F, volumesRowName = NULL, templateDF = ionIS, 
                                 color = T, dss = dateSampleString, tss = timeSampleString, 
                                 h = header, v = volumes, p = profData)
@@ -764,9 +782,8 @@ updateLimno <- function(dbdir, db, funcdir, logFilesDir, sampleSheetsDir,
       samplesIS <- bind_rows(tochar(samplesIS), 
                              tochar(samplesNEW))
       
-      if(exists("profilesNEW")){profilesIS <- bind_rows(tochar(profilesIS), 
-                                tochar(profilesNEW))
-      }  
+      if(exists("profilesNEW")){profilesIS <- bind_rows(tochar(profilesIS), tochar(profilesNEW))}  
+      if(exists("gagesNEW")){gagesIS <- bind_rows(tochar(gagesIS), tochar(gagesNEW))}
       if(exists("bpNEW")){bpIS <- bind_rows(tochar(bpIS), tochar(bpNEW))}
       if(exists("chlNEW")){chlIS <- bind_rows(tochar(chlIS), tochar(chlNEW))}
       if(exists("docNEW")){docIS <- bind_rows(tochar(docIS), tochar(docNEW))}
@@ -851,6 +868,10 @@ updateLimno <- function(dbdir, db, funcdir, logFilesDir, sampleSheetsDir,
                   select(-entryFile),  # remove the temporary entryFile column
                 here(logFilesDir, "profilesIS.csv"), row.names = FALSE)
     }
+    if(exists("gagesNEW")){
+      write.csv(gagesIS,here(logFilesDir, "gagesIS.csv"),row.names=FALSE)
+    }
+    
     ## other log files
     write.csv(bpIS, here(logFilesDir, "bpLogFile.csv"), row.names = FALSE)
     write.csv(chlIS, here(logFilesDir, "chlLogFile.csv"), row.names = FALSE)

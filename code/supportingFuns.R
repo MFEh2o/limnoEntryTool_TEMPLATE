@@ -90,6 +90,7 @@ ionInit <- data.frame(ionsID = "I0",
                      depthClass = "surface",
                      depthTop = 0,
                      depthBottom = 0,
+                     replicate=1,
                      comments = "aaa",
                      sampleID = "ZZ_zzz_NA_9999_surface_0_fishScapesLimno.20190319",
                      metadataID = NA)
@@ -307,6 +308,59 @@ profileDataRows <- function(d = profData, h = header, dss = dateSampleString,
   return(profilesNEW)
 }
 
+# staffgageDataRows ---------------------------------------------------------
+staffgageDataRows <- function(d = gauges, samps=gaugeSamples, h = header, dss = dateSampleString, 
+                            tss = timeSampleString){
+  assertDataFrame(d)
+  assertDataFrame(samps)
+  assertList(h)
+  assertSubset(c("projectID", "lakeID", "siteName", "dateSample", "dateTimeSample", "metadataID", "comments"), names(h))
+  assertCharacter(dss, len = 1, pattern = "[0-9]{8}")
+  assertCharacter(tss, len = 1, pattern = "[0-9]{4}")
+  
+  # subset d to match samps
+  d=d[!is.na(d$height),]
+  
+  gagesNEW <- data.frame(projectID = h$projectID,
+                         lakeID = samps$lakeID,
+                         siteName = unlist(lapply(strsplit(samps$siteID,"_"),function(x){return(x[2])})),
+                         dateSample = h$dateSample,
+                         dateTimeSample = h$dateTimeSample,
+                         depthClass = "staff",
+                         depthTop=0,
+                         depthBottom=0,
+                         waterHeight=d$height,
+                         waterHeightUnits=d$unit,
+                         waterHeight_m=NA,
+                         metadataID=h$metadataID,
+                         comments=h$comments,
+                         updateID=NA)
+  
+  # calculate waterHeight_m depending on waterHeightUnits
+  for(i in 1:nrow(gagesNEW)){
+    if(gagesNEW$waterHeightUnits[i]=="ft"){
+      gagesNEW$waterHeight_m[i]=gagesNEW$waterHeight[i]*0.3048
+    }else if(gagesNEW$waterHeightUnits[i]=="cm"){
+      gagesNEW$waterHeight_m[i]=gagesNEW$waterHeight[i]*0.01     
+    }else if(gagesNEW$waterHeightUnits[i]=="m"){
+      gagesNEW$waterHeight_m[i]=gagesNEW$waterHeight[i]*1      
+    }else if(gagesNEW$waterHeightUnits[i]=="in"){
+      gagesNEW$waterHeight_m[i]=gagesNEW$waterHeight[i]*0.0254
+    }
+  }
+  
+  #generate sampleID
+  gagesNEW$sampleID = paste(gagesNEW$lakeID, gagesNEW$siteName, dss, tss, gagesNEW$depthClass, gagesNEW$depthBottom, gagesNEW$metadataID, sep = "_")
+  
+  # put the columns in the right order
+  gagesNEW <- gagesNEW[,c("projectID", "sampleID", "lakeID", "siteName", "dateSample", 
+             "dateTimeSample", "depthClass", "depthTop", "depthBottom", "waterHeight", 
+             "waterHeightUnits", "waterHeight_m","metadataID", "comments", 
+             "updateID")]
+  
+  return(gagesNEW)
+}
+
 # General dataRows function -----------------------------------------------
 dataRows <- function(idName, idPrefix, idStart = curID, rowName, 
                      addReplicates = F, addVolumes = F, templateDF, 
@@ -399,8 +453,8 @@ dataRows <- function(idName, idPrefix, idStart = curID, rowName,
     
     ##********* add ifelse here to deal with lake (build lakeID_site) and stream (use just site)
     rows$sampleID = ifelse(grepl("_",rows$site),
-                            yes=paste(rows$lakeID, rows$site, dss, tss,rows$depthClass, rows$depthBottom, rows$metadataID, sep = "_"),
-                            no=paste(rows$site, dss, tss,rows$depthClass, rows$depthBottom, rows$metadataID, sep = "_"))
+                            yes=paste(rows$site, dss, tss,rows$depthClass, rows$depthBottom, rows$metadataID, sep = "_"),
+                            no=paste(rows$lakeID,rows$site, dss, tss,rows$depthClass, rows$depthBottom, rows$metadataID, sep = "_"))
   
     rows <- rows %>%
     # Put the columns in the right order

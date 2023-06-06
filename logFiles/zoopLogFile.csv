@@ -1,2 +1,3 @@
 "zoopID","projectID","lakeID","site","dateSample","timeSample","depthClass","depthTop","depthBottom","comments","sampleID"
-"Z805",99999,"ZZ","zzz","2222-22-22","99:99","zzz",0,0,"aaa","aaa"
+"Z805","99999","ZZ","zzz","2222-22-22","99:99","zzz","0","0","aaa","aaa"
+"Z806","15","MO","DeepHole","2023-06-06","11:13","tow","0","5.5","","MO_DeepHole_20230606_1113_tow_5.5_Limno.Sample.20230529"
