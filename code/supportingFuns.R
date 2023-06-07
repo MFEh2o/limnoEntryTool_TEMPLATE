@@ -417,12 +417,11 @@ dataRows <- function(idName, idPrefix, idStart = curID, rowName,
     ## 1. For the actual depth classes, add the site name from `header`. 
     ## Else, use `type` as site. 
     mutate(site = case_when(type %in% c("PML", "hypo") ~ h$siteName,
-                            TRUE ~ type),
+                            TRUE ~ word(type,2,2,sep="_")),
            ## 2. For the sites, assign depthClass "surface". 
            ## Else, use `type` as depthClass
            depthClass = case_when(!type %in% c("PML", "hypo") ~ "surface",
                                   TRUE ~ type)) %>%
-    select(-type) %>% # no longer need this column
     # Define depths conditionally based on depth classes
     mutate(depthTop = case_when(depthClass == "surface" ~ 0,
                                 depthClass == "PML" ~ pt,
@@ -447,11 +446,12 @@ dataRows <- function(idName, idPrefix, idStart = curID, rowName,
         ungroup()} else .} 
   
     # deal with lakeID (lakes v. streams)
-    rows$lakeID = unlist(lapply(strsplit(rows$site,"_"),function(x){return(x[1])}))
+    rows$lakeID = unlist(lapply(strsplit(rows$type,"_"),function(x){return(x[1])}))
     rows$lakeID[rows$site==h$siteName] = h$lakeID
-    # Create sampleID's
     
-    ##********* add ifelse here to deal with lake (build lakeID_site) and stream (use just site)
+    rows$type <- NULL
+    
+    # Create sampleID's
     rows$sampleID = ifelse(grepl("_",rows$site),
                             yes=paste(rows$site, dss, tss,rows$depthClass, rows$depthBottom, rows$metadataID, sep = "_"),
                             no=paste(rows$lakeID,rows$site, dss, tss,rows$depthClass, rows$depthBottom, rows$metadataID, sep = "_"))
